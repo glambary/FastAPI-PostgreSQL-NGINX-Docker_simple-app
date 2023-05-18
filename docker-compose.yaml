@@ -1,0 +1,70 @@
+version: "3"
+
+services:
+  pgadmin:
+    container_name: "pgadmin__simple_app"
+    image: dpage/pgadmin4:7.1
+    environment:
+      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
+      PGADMIN_DEFAULT_PASSWORD: 0
+      PGADMIN_LISTEN_PORT: 100
+    ports:
+      - "5050:100"
+    networks:
+      - custom
+
+  db:
+    container_name: "db__simple_app"
+    image: postgres:15.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - custom
+
+  app:
+    container_name: "app__simple_app"
+    build: ./app
+    env_file: .env
+#    volumes:
+#      - ./app:/app
+    command: bash -c "
+      cd /app &&
+      alembic upgrade head &&
+      uvicorn main:app --host=0.0.0.0 --port=8000 --reload
+      "
+    ports:
+      - "8000:8000"
+#    expose:
+#      - 8000
+    depends_on:
+      - db
+    networks:
+      - custom
+
+  web:
+    container_name: "web__simple_app"
+    image: nginx:alpine
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web/conf.d:/etc/nginx/conf.d
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
+
+
+# запуск
+# sudo docker-compose up
