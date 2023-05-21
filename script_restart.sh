@@ -1,6 +1,6 @@
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)
-#docker rmi $(docker images -aq) # закоментить, если не нужно удаление всех образов
+docker rmi $(docker images -aq) # закоментить, если не нужно удаление всех образов
 
 # выбрать образы которые нужно пересобрать 
 #docker rmi postgres:15.2-alpine
@@ -19,3 +19,6 @@ docker images
 echo "---------------------------------------------------------------------"
 echo ""
 docker-compose up
+
+#sudo netstat -tulpn | grep :5432
+#sudo kill -9
