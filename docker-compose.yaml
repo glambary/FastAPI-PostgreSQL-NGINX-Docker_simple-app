@@ -40,8 +40,8 @@ services:
       alembic upgrade head &&
       uvicorn main:app --host=0.0.0.0 --port=8000 --reload
       "
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
 #    expose:
 #      - 8000
     depends_on:
@@ -55,7 +55,7 @@ services:
     depends_on:
       - app
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./web/conf.d:/etc/nginx/conf.d
     networks:
